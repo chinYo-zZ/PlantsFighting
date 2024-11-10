@@ -3,30 +3,38 @@
 
 #include "PlantsFighting/PlantsFighting.h"
 
-using namespace std;
+Scene* menu_scene = nullptr;
+Scene* game_scene = nullptr;
+Scene* selector_scene = nullptr;
+
+SceneManager scene_manager;
 
 int main()
 {
 	ExMessage msg;
 	const int FPS = 60;
-	initgraph(1280, 720);
+	LoadGameResources();
+	initgraph(1280, 720, EW_SHOWCONSOLE);
 
 	BeginBatchDraw();
 
-	Scene* scene = new MenuScene();
-	scene->on_enter();
+	menu_scene = new MenuScene();
+	game_scene = new GameScene();
+	selector_scene = new SelectorScene();
+
+	scene_manager.SetCurrentScene(menu_scene);
 
 	while (true) {
 		DWORD frame_start_time = GetTickCount();
 
 		while (peekmessage(&msg)) {
-			scene->on_input(msg);
+			scene_manager.on_input(msg);
 		}
 
-		scene->on_update();
-		cleardevice();
+		scene_manager.on_update();
 
-		scene->on_draw();
+		cleardevice();
+		scene_manager.on_draw();
 		FlushBatchDraw();
 
 		DWORD frame_end_time = GetTickCount();
